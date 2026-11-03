@@ -140,6 +140,7 @@
         density: 100
         mask:
         - SmallMobMask
+        - HighImpassable # Doors block HighImpassable.
         layer:
         - SmallMobLayer
   - type: MobState
@@ -299,6 +300,7 @@
         density: 100
         mask:
         - SmallMobMask
+        - HighImpassable # Doors block HighImpassable.
         layer:
         - SmallMobLayer
   - type: MobState
@@ -330,7 +332,6 @@
     tags:
     - Trash
     - TP14TagFish
-  - type: ReproductivePartner
   - type: Solution
     solution:
       reagents:
@@ -493,6 +494,10 @@
   name: sea bunny
   description: An adorable bunny-like creature that lives in.. the sea!
   components:
+  - type: HTN
+    constantlyReplan: false
+    rootTask:
+      task: MouseCompound
   - type: GhostRole
     makeSentient: true
     allowSpeech: true
@@ -511,6 +516,7 @@
         density: 120
         mask:
         - SmallMobMask
+        - HighImpassable # Doors block HighImpassable.
         layer:
         - SmallMobLayer
   - type: GhostTakeoverAvailable

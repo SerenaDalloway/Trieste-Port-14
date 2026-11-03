@@ -1,3 +1,4 @@
+using Content.Server._TP.Bells.Systems;
 using Content.Server._TP.StationEvents.Components;
 using Content.Server.Administration.Logs;
 using Content.Server.Audio;
@@ -39,6 +40,7 @@ public sealed partial class FlashStormRule : StationEventSystem<FlashStormRuleCo
     [Dependency] private SharedWeatherSystem _weather = default!;
     [Dependency] private IEntityManager _entManager = default!;
     [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private BellSystem _bell = default!;
 
     protected override void Started(Entity<FlashStormRuleComponent, GameRuleComponent> ent, ref GameRuleStartedEvent args)
     {
@@ -53,6 +55,9 @@ public sealed partial class FlashStormRule : StationEventSystem<FlashStormRuleCo
                 "/Audio/StationEvents/the_approaching_storm.ogg",
                 AudioParams.Default.WithVolume(-2f),
                 false);
+
+        // Send the Diving Bell to Sweetwater and lock it until the storm passes.
+        _bell.StartStormLockdown();
 
         if (!_protoMan.TryIndex(ent.Comp1.StormWeather, out var stormWeather))
             return;
@@ -73,7 +78,7 @@ public sealed partial class FlashStormRule : StationEventSystem<FlashStormRuleCo
         foreach (var mapId in mapIds)
         {
             _weather.TrySetWeather(mapId, stormWeather, out _, TimeSpan.FromMinutes(99999));
-            Log.Error("Weather set");
+            Log.Debug("Weather set");
         }
 
         foreach (var thunder in EntityQuery<LightningMarkerComponent>())
@@ -88,7 +93,7 @@ public sealed partial class FlashStormRule : StationEventSystem<FlashStormRuleCo
 
     private void BeginFlicker(FlashStormRuleComponent comp)
     {
-        Log.Error("beginning flicker");
+        Log.Debug("beginning flicker");
 
         var lights = GetEntityQuery<PoweredLightComponent>();
         comp.Flickering = true;
@@ -110,7 +115,7 @@ public sealed partial class FlashStormRule : StationEventSystem<FlashStormRuleCo
     {
         base.Ended(rule, ref args);
 
-        Log.Error("flash storm ended");
+        Log.Debug("flash storm ended");
         _adminLogger.Add(LogType.EventStarted, LogImpact.Extreme, $"{ToPrettyString(rule.Owner)} Flash Storm ended.");
 
         foreach (var thunder in EntityQuery<LightningMarkerComponent>())
@@ -122,6 +127,9 @@ public sealed partial class FlashStormRule : StationEventSystem<FlashStormRuleCo
 
         // Stop flickering before any early returns, so a bad weather prototype can't leave it stuck on.
         rule.Comp.Flickering = false;
+
+        // Same for the bell: always unlock it, even if the weather below fails.
+        _bell.EndStormLockdown();
 
         if (!_protoMan.TryIndex(rule.Comp.NormalWeather, out var normalWeather))
             return;
@@ -142,7 +150,7 @@ public sealed partial class FlashStormRule : StationEventSystem<FlashStormRuleCo
         foreach (var mapId in mapIds)
         {
             _weather.TrySetWeather(mapId, normalWeather, out _, TimeSpan.FromMinutes(99999));
-            Log.Error("Weather set");
+            Log.Debug("Weather set");
         }
     }
 }
