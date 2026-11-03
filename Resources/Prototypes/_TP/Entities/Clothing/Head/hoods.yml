@@ -8,3 +8,14 @@
     sprite: _TP/Clothing/Head/Hoods/rain_slicker.rsi
   - type: Clothing
     sprite: _TP/Clothing/Head/Hoods/rain_slicker.rsi
+
+- type: entity
+  parent: ClothingHeadHatHoodWinterBase
+  id: TP14ClothingHeadHatHoodPinkHoodie
+  categories: [ HideSpawnMenu ]
+  name: Pink hoodie hood
+  components:
+  - type: Sprite
+    sprite: _TP/Clothing/Head/Hoods/pink_hood.rsi/
+  - type: Clothing
+    sprite: _TP/Clothing/Head/Hoods/pink_hood.rsi/

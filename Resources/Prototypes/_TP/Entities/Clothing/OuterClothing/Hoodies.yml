@@ -1,0 +1,22 @@
+- type: entity
+  parent: ClothingOuterStorageBase
+  id: TP14ClothingPinkHoodie
+  suffix: Trieste, Hoodie
+  name: Pink oversized hoodie
+  description: description? what's that?
+  components:
+  - type: Sprite
+    sprite: _TP/Clothing/OuterClothing/Hoodies/pink_hoodie.rsi
+  - type: Clothing
+    sprite: _TP/Clothing/OuterClothing/Hoodies/pink_hoodie.rsi
+  - type: TemperatureProtection
+    coefficient: 0.6 # TemperatureProtection tier (winter-coat level); was heatingCoefficient: 1.1 coolingCoefficient: 0.3
+  - type: Item
+    size: Huge
+  - type: Storage
+    grid:
+    - 0,0,2,1
+    maxItemSize: Small
+    quickInsert: false
+  - type: ToggleableClothing
+    clothingPrototype: TP14ClothingHeadHatHoodPinkHoodie
